@@ -4,7 +4,7 @@
   "separator": ",",
   "encoding": "utf-8",
   "start_page": 1,
-  "end_page": 20,
+  "end_page": 658,
   "include_genre": false,
   "base_page_url": "https://www.vgchartz.com/gamedb/?page=",
   "query_parameters": {
@@ -35,8 +35,8 @@
     "goty_year": null,
     "genre": null
   },
-  "minimum_sleep_time": 6,
-  "maximum_sleep_time": 15,
+  "minimum_sleep_time": 2,
+  "maximum_sleep_time": 10,
   "minimum_major_version": 1,
   "maximum_major_version": 56,
   "minimum_minor_version": 1,
