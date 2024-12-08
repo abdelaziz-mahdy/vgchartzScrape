@@ -5,7 +5,7 @@
   "encoding": "utf-8",
   "start_page": 1,
   "end_page": 20,
-  "include_genre": true,
+  "include_genre": false,
   "base_page_url": "https://www.vgchartz.com/gamedb/?page=",
   "query_parameters": {
     "results": 100,
