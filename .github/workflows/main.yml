@@ -1,1 +1,45 @@
 
+name: Run Script and Commit Changes
+
+on:
+  push:
+    branches:
+      - master  # Adjust this if your default branch is not "main"
+  workflow_dispatch:
+
+jobs:
+  run-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # Adjust the Python version if needed
+
+      # Make the run.sh script executable and run it
+      - name: Run the script
+        run: |
+          chmod +x run.sh
+          ./run.sh
+
+      - name: Pull Remote Changes
+        run: git pull
+          
+      - name: Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+            commit_message: "Chore: latest Update"
+            file_pattern: "*.csv"
+            repository: .
+            skip_fetch: false
+            commit_user_name: "github-actions[bot]"
+            commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+            commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+        
+            
