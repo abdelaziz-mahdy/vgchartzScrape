@@ -9,6 +9,7 @@ import sys
 import time
 import json
 
+
 def create_random_header():
     """
     Create a random user agent in order to better mimic user behaviour.
@@ -17,8 +18,10 @@ def create_random_header():
     logging.info("create_random_header >>>")
     browsers = ["Mozilla", "Chrome"]
     os_list = ["Windows NT 6.1; Win64; x64", "X11; Linux x86_64"]
-    major_version = randint(properties['minimum_major_version'], properties['maximum_major_version'])
-    minor_version = randint(properties['minimum_minor_version'], properties['maximum_minor_version'])
+    major_version = randint(
+        properties['minimum_major_version'], properties['maximum_major_version'])
+    minor_version = randint(
+        properties['minimum_minor_version'], properties['maximum_minor_version'])
     chosen_browser = choice(browsers)
     chosen_os = choice(os_list)
 
@@ -32,19 +35,21 @@ def create_random_header():
     logging.info("create_random_header <<<")
     return header
 
+
 def generate_remaining_url(*, query_parameters):
     """
     Generate an url with a list of videogames from the query params configured at resources.json
     :return: Url with page number
     """
     logging.info("generate_remaining_url >>>")
-    reply=''
+    reply = ''
     for param in query_parameters:
-        value=query_parameters.get(param, None)
+        value = query_parameters.get(param, None)
         reply += f"&{param}={value}" if value is not None else f"&{param}="
     logging.debug(f"Url Generated: {base_url}N{reply}")
     logging.info("generate_remaining_url <<<")
     return reply
+
 
 def get_page(*, url):
     """
@@ -59,7 +64,8 @@ def get_page(*, url):
     header = create_random_header()
     request = urllib.request.Request(url, headers=header)
     result = urllib.request.urlopen(request).read()
-    time.sleep(randint(properties['minimum_sleep_time'], properties['maximum_sleep_time']))
+    time.sleep(
+        randint(properties['minimum_sleep_time'], properties['maximum_sleep_time']))
     logging.info("get_page <<<")
     return result
 
@@ -92,6 +98,7 @@ def get_genre(*, game_url):
     logging.info("get_genre <<<")
     return genre_value
 
+
 def parse_number(*, number_string):
     """
     Return string parsed to float with custom format for millions (m)
@@ -104,10 +111,11 @@ def parse_number(*, number_string):
         reply = number_string.strip('m')
         reply = str(float(reply) * 1000000)
     else:
-        reply=number_string
+        reply = number_string
 
     logging.info("parse_number <<<")
     return float(reply) if not reply.startswith("N/A") else np.nan
+
 
 def parse_date(*, date_string):
     """
@@ -119,12 +127,13 @@ def parse_date(*, date_string):
     if date_string.startswith('N/A'):
         date_formatted = 'N/A'
     else:
-        #i.e. date_string = '18th Feb 20'
+        # i.e. date_string = '18th Feb 20'
         date_formatted = pd.to_datetime(date_string)
 
     logging.debug("Date parsed: {}".format(date_formatted))
     logging.info("parse_date <<<")
     return date_formatted
+
 
 def add_current_game_data(*,
                           current_rank,
@@ -186,18 +195,19 @@ def download_data(*, start_page, end_page, include_genre):
 
         # We locate the game through search <a> tags with game urls in the main table
         game_tags = list(filter(
-            lambda x: x.attrs['href'].startswith('https://www.vgchartz.com/game/'),
+            lambda x: 'href' in x.attrs and x.attrs['href'].startswith(
+                'https://www.vgchartz.com/game/'),
             # discard the first 10 elements because those
             # links are in the navigation bar
             soup.find_all("a")
-        ))[10:]
-
+        ))
         for tag in game_tags:
 
             current_game_name = " ".join(tag.string.split())
             data = tag.parent.parent.find_all("td")
 
-            logging.debug("Downloaded game: {}. Name: {}".format(downloaded_games + 1, current_game_name))
+            logging.debug("Downloaded game: {}. Name: {}".format(
+                downloaded_games + 1, current_game_name))
 
             # Get the resto of attributes traverse up the DOM tree looking for the cells in results' table
             current_rank = np.int32(data[0].string)
@@ -277,13 +287,14 @@ def save_games_data(*, filename, separator, enc):
 
     df = pd.DataFrame(columns)
     logging.debug("Dataframe column name: {}".format(df.columns))
-    df = df[[ 'Rank', 'Name', 'Genre', 'Platform', 'Publisher', 'Developer',
-              'Vgchartz_Score', 'Critic_Score', 'User_Score', 'Total_Shipped',
-              'Total_Sales', 'NA_Sales', 'PAL_Sales', 'JP_Sales', 'Other_Sales',
-              'Release_Date', 'Last_Update' ]]
+    df = df[['Rank', 'Name', 'Genre', 'Platform', 'Publisher', 'Developer',
+             'Vgchartz_Score', 'Critic_Score', 'User_Score', 'Total_Shipped',
+             'Total_Sales', 'NA_Sales', 'PAL_Sales', 'JP_Sales', 'Other_Sales',
+             'Release_Date', 'Last_Update']]
 
     df.to_csv(filename, sep=separator, encoding=enc, index=False)
     logging.info("save_games_data <<<")
+
 
 if __name__ == "__main__":
 
@@ -321,7 +332,8 @@ if __name__ == "__main__":
     try:
         logging.info('Application started')
         base_url = properties['base_page_url']
-        remaining_url=generate_remaining_url(query_parameters=properties['query_parameters'])
+        remaining_url = generate_remaining_url(
+            query_parameters=properties['query_parameters'])
 
         download_data(
             start_page=properties['start_page'],
